@@ -11,7 +11,7 @@ const _ = require('lodash');
 
 const refs = {
   inputEl: document.querySelector('.form-input'),
-  resultContainer: document.querySelector('.for-result')
+  resultContainer: document.querySelector('.for-result'),
 }
 
 refs.inputEl.addEventListener('input', _.debounce(onInput, 500));
@@ -32,23 +32,11 @@ function onInput(e) {
 
   refs.resultContainer.innerHTML = '';
 
-  fetchCountries(inputValue).then(createResult);
+  fetchCountries(inputValue).then(createResult).catch(onError);
 }
 
 function createResult(countryArr) {
   const listLength = countryArr.length;
-
-  const { status } = countryArr;
-
-  if (status === 404) {
-    return error({
-      text: 'Country not fount. Try agin',
-      type: 'error',
-      sticker: false,
-      maxTextHeight: null,
-      delay: 3000,
-  })
-  }
 
   if (listLength === 1) {
     return countryInfoMarkup(countryArr);
@@ -65,7 +53,7 @@ function createResult(countryArr) {
       sticker: false,
       maxTextHeight: null,
       delay: 3000,
-    })
+    });
   }
 }
 
@@ -79,3 +67,12 @@ function listOfCountryMarkup(countryArr) {
   refs.resultContainer.innerHTML = fetchList;
 }
 
+function onError() {
+  return error({
+    text: 'Country not fount. Try agin',
+    type: 'error',
+    sticker: false,
+    maxTextHeight: null,
+    delay: 3000,
+  });
+}
